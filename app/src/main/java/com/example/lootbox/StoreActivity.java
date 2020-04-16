@@ -18,6 +18,7 @@ import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +54,10 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
 
     /* Connect to Google Play */
     private void establishConnection() {
-        billingClient = BillingClient.newBuilder(this).setListener(this).build();
+        billingClient = BillingClient.newBuilder(this)
+                .setListener(this)
+                .enablePendingPurchases()
+                .build();
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
             public void onBillingSetupFinished(BillingResult billingResult) {
@@ -75,10 +79,11 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
     private void purchaseItem() {
         // Test Items
         List<String> itemsList = new ArrayList<>(
-                Arrays.asList(
-                        "Sandal", "Fork", "Spoon", "Couch", "Credit Card", "Nail Clipper",
-                        "Bed", "Paper", "Headphones", "Book", "Outlet", "Tree", "Grass", "Apple",
-                        "Banana", "Pear", "Pen", "Pencil")
+                Arrays.asList("Apple", "Banana", "Pear", "Pen", "Pencil")
+//                Arrays.asList(
+//                        "Sandal", "Fork", "Spoon", "Couch", "Credit Card", "Nail Clipper",
+//                        "Bed", "Paper", "Headphones", "Book", "Outlet", "Tree", "Grass", "Apple",
+//                        "Banana", "Pear", "Pen", "Pencil")
         );
 
         if(billingClient.isReady()){
@@ -96,7 +101,7 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
                 }
             });
         } else {
-            //todo: else...
+            Toast.makeText(StoreActivity.this, "Error: The billing client is not ready!", Toast.LENGTH_SHORT).show();
         }
     }
 

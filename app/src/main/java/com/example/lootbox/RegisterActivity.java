@@ -63,7 +63,6 @@ public class RegisterActivity extends AppCompatActivity {
         String email = emailInput.getText().toString();
         String password = passwordInput.getText().toString();
         String confirmPassword = confirmPasswordInput.getText().toString();
-        String userId = fbAuth.getCurrentUser().getUid();
 
         /* Check if any field is empty */
         if (firstName.isEmpty()){
@@ -101,6 +100,7 @@ public class RegisterActivity extends AppCompatActivity {
         fbAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(create -> {
             if(create.isSuccessful()) {
                 /* Create data in Firestore */
+                String userId = fbAuth.getCurrentUser().getUid();
                 DocumentReference docRef = firestore.collection("users").document(userId);
 
                 HashMap<String, Object> user = new HashMap<>();
@@ -108,16 +108,12 @@ public class RegisterActivity extends AppCompatActivity {
                 user.put("lastName", lastName);
                 user.put("email", email);
 
-                docRef.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Success", "Success!");
-                    }
-                });
+                docRef.set(user).addOnSuccessListener(aVoid -> Log.d("Success", "Success!"));
 
                 /* Display success message and start the main activity */
                 Toast.makeText(RegisterActivity.this, "User has been created!", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//                finish();
             } else {
                 /* Display error message */
                 Toast.makeText(RegisterActivity.this, "Failed to create a new user.", Toast.LENGTH_SHORT).show();

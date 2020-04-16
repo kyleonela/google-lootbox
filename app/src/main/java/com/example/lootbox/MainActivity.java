@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToMyInventory() {
-//        startActivity(new Intent(getApplicationContext(), InventoryActivity.class));
+        startActivity(new Intent(getApplicationContext(), InventoryActivity.class));
     }
 
     /* Log out user from app */
