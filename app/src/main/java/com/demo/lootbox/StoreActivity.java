@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -23,11 +24,15 @@ import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.demo.lootbox.adapters.StoreRecyclerViewAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class StoreActivity extends AppCompatActivity implements PurchasesUpdatedListener {
 
@@ -45,6 +50,8 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
 
     String sku, itemName, itemDesc, itemPrice;
     SkuDetails skuDetails;
+
+    Random random = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,15 +135,42 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK
                 && purchases != null) {
             //for every purchase
-            for (Purchase purchase : purchases) {
-                handlePurchase(purchase);
-            }
+//            for (Purchase purchase : purchases) {
+//                handlePurchase(purchase);
+//            }
+
+            List<String> itemsList = new ArrayList<>();
+            itemsList.add("Sandal");
+            itemsList.add("Fork");
+            itemsList.add("Spoon");
+            itemsList.add("Couch");
+            itemsList.add("Credit Card");
+            itemsList.add("Book");
+            itemsList.add("Nail Clipper");
+            itemsList.add("Bed");
+            itemsList.add("Paper");
+            itemsList.add("Headphones");
+            itemsList.add("Outlet");
+
+            String randomItemName = itemsList.get( random.nextInt(itemsList.size()) );
+            int randomNumber = random.nextInt(1000);
+
+            String userId = fbAuth.getCurrentUser().getUid();
+
+            HashMap<String, Object> items = new HashMap<>();
+            items.put("itemName", randomItemName);
+            items.put("itemPrice", randomNumber);
+
+            CollectionReference colRef = firestore.collection("items").document(userId).collection("itemsList");
+            colRef.add(items).addOnSuccessListener(aVoid -> Log.d("Success", "Success!"));
+
+            Toast.makeText(StoreActivity.this, "Your item is: " + randomItemName, Toast.LENGTH_SHORT).show();
+
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
             // Handle an error caused by a user cancelling the purchase flow.
             Toast.makeText(StoreActivity.this, "You have cancelled the purchase.", Toast.LENGTH_SHORT).show();
         } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED) {
             Toast.makeText(StoreActivity.this, "Item already owned!", Toast.LENGTH_SHORT).show();
-            purchaseButton.setEnabled(false); //disable the button
         }
         else {
             // Handle any other error codes.
@@ -147,8 +181,7 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
     private void handlePurchase(Purchase purchase) {
         if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
             Toast.makeText(StoreActivity.this, "You have purchased an item: " + itemName, Toast.LENGTH_SHORT).show();
-            purchaseButton.setEnabled(false);
-            //TODO: if it works, create a new item in the store, then write firebase code here to store it!
+//            purchaseButton.setEnabled(false);
 
             // Grant entitlement to the user.
             // Acknowledge the purchase if it hasn't already been acknowledged.
