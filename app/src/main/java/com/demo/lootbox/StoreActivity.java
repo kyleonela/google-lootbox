@@ -45,13 +45,6 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
 
     String sku, itemName, itemDesc, itemPrice;
     SkuDetails skuDetails;
-    String initialNames[] = {"Random Item","Random Item","Random Item","Random Item","Random Item","Random Item"};
-    int images[] = {R.drawable.baseline_email_black_18dp,
-            R.drawable.baseline_email_black_18dp,
-            R.drawable.baseline_email_black_18dp,
-            R.drawable.baseline_email_black_18dp,
-            R.drawable.baseline_email_black_18dp,
-            R.drawable.baseline_email_black_18dp};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +55,7 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
         fbAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         purchaseButton = findViewById(R.id.purchaseButton);
-        storeRecyclerView = findViewById(R.id.storeRecyclerView);
-
-        StoreRecyclerViewAdapter adapter = new StoreRecyclerViewAdapter(this, initialNames, images);
-        storeRecyclerView.setAdapter(adapter);
-        storeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        storeRecyclerView = findViewById(R.id.storeRecyclerView);
 
         establishConnection();
 
@@ -85,26 +74,24 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
             @Override
             public void onBillingSetupFinished(BillingResult billingResult) {
                 if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                    Toast.makeText(StoreActivity.this, "Billing store successfully connected", Toast.LENGTH_SHORT).show();
+                    //todo: uncomment this
+//                    Toast.makeText(StoreActivity.this, "Billing store successfully connected", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(StoreActivity.this, "Cannot connect to store: " + billingResult.getResponseCode() , Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onBillingServiceDisconnected() {
                 Toast.makeText(StoreActivity.this, "You have disconnected from the Billing service", Toast.LENGTH_SHORT).show();
             }
         });
-
-        queryInfo();
     }
 
-    public void queryInfo() {
+    private void purchaseItem() {
         // Test Items
         List<String> itemsList = new ArrayList<>();
         itemsList.add("android.test.purchased");
-
+        itemsList.add("apple_test");
         if(billingClient.isReady()){
             SkuDetailsParams skuDetailsParams = SkuDetailsParams.newBuilder()
                     .setSkusList(itemsList).setType(BillingClient.SkuType.INAPP).build();
@@ -113,13 +100,18 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
                         @Override
                         public void onSkuDetailsResponse(BillingResult billingResult, List<SkuDetails> list) {
                             //process the result
+                            BillingFlowParams flowParams = BillingFlowParams.newBuilder()
+                                    .setSkuDetails(list.get(0))
+                                    .build();
+                            billingClient.launchBillingFlow(StoreActivity.this, flowParams);
+
                             if(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && list != null){
                                 for (SkuDetails skuDetail : list) {
                                     skuDetails = skuDetail;
                                     sku = skuDetail.getSku();
-                                    itemPrice = skuDetail.getPrice();
                                     itemName = skuDetail.getTitle();
                                     itemDesc = skuDetail.getDescription();
+                                    itemPrice = skuDetail.getPrice();
                                 }
                             } else {
                                 Toast.makeText(StoreActivity.this, "Error: Cannot query product", Toast.LENGTH_SHORT).show();
@@ -129,14 +121,6 @@ public class StoreActivity extends AppCompatActivity implements PurchasesUpdated
         } else {
             Toast.makeText(StoreActivity.this, "Error: The billing client is not ready!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    /* Query for in-app product details */
-    public void purchaseItem() {
-        BillingFlowParams bfp = BillingFlowParams.newBuilder()
-                .setSkuDetails(skuDetails)
-                .build();
-        billingClient.launchBillingFlow(StoreActivity.this, bfp);
     }
 
     @Override
