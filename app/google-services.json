@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:556502944677:android:74c9406537ee87e7dc364c",
         "android_client_info": {
-          "package_name": "com.example.lootbox"
+          "package_name": "com.demotest.lootbox"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "556502944677-9dkb740ppvh49cfdi407itn90nddrbao.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.lootbox",
+            "package_name": "com.demotest.lootbox",
             "certificate_hash": "03bc2c7405c4bc93456f311f6a8cbf2d4cead331"
           }
         },
