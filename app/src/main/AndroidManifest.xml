@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.lootbox">
+    package="com.demo.lootbox">
+
+
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+
+
 
     <application
         android:allowBackup="true"
@@ -9,18 +15,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".InventoryActivity"></activity>
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".StoreActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name="com.demo.lootbox.InventoryActivity"></activity>
+        <activity android:name="com.demo.lootbox.ProfileActivity" />
+        <activity android:name="com.demo.lootbox.StoreActivity" />
+        <activity android:name="com.demo.lootbox.RegisterActivity" />
+        <activity android:name="com.demo.lootbox.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.demo.lootbox.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
